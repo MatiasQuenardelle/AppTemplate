@@ -64,11 +64,11 @@ actor FirestoreService {
 
     // MARK: - Listeners
 
-    func addNotesListener(
+    nonisolated func addNotesListener(
         userId: String,
         onChange: @escaping @Sendable ([FSNote]) -> Void
     ) -> ListenerRegistration {
-        db.collection("users").document(userId)
+        Firestore.firestore().collection("users").document(userId)
             .collection("notes")
             .addSnapshotListener { snapshot, error in
                 guard let documents = snapshot?.documents else { return }
@@ -77,11 +77,11 @@ actor FirestoreService {
             }
     }
 
-    func addProfileListener(
+    nonisolated func addProfileListener(
         userId: String,
         onChange: @escaping @Sendable (FSUserProfile?) -> Void
     ) -> ListenerRegistration {
-        db.collection("users").document(userId)
+        Firestore.firestore().collection("users").document(userId)
             .collection("profile").document("data")
             .addSnapshotListener { snapshot, error in
                 guard let snapshot else { return }
