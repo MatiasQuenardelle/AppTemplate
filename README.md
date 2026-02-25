@@ -19,6 +19,33 @@ A production-ready iOS app template built with SwiftUI, providing authentication
 - **Firebase Analytics + Crashlytics** (disabled in DEBUG builds)
 - **Example "Notes" module** demonstrating the full CRUD + sync pattern
 
+## Prerequisites
+
+Before using this template, you need accounts and projects set up for the services it integrates with:
+
+1. **Xcode 16+** -- Install from the Mac App Store.
+
+2. **XcodeGen** -- Install via Homebrew:
+   ```bash
+   brew install xcodegen
+   ```
+
+3. **Firebase project** -- Go to [Firebase Console](https://console.firebase.google.com), create a new project, then:
+   - Add an iOS app with your bundle ID
+   - Enable **Authentication** and turn on the sign-in providers you want (Apple, Google, Email/Password)
+   - Enable **Cloud Firestore** and create a database
+   - Enable **Storage** if you want image uploads (used by bug reporting)
+   - Download the generated `GoogleService-Info.plist` -- you'll drop this into the project later
+
+4. **RevenueCat account** -- Sign up at [RevenueCat](https://www.revenuecat.com), create a project, and configure your App Store Connect API key. You'll need your RevenueCat API keys (debug and production) from the project dashboard.
+
+5. **OpenAI API key** -- Sign up at [OpenAI Platform](https://platform.openai.com), add billing, and create an API key under API Keys.
+
+6. **Apple Developer account** -- Required for Sign in with Apple, push notifications, and App Groups. In your [Apple Developer portal](https://developer.apple.com/account):
+   - Register your App ID with the Sign in with Apple capability
+   - Create an App Group matching `group.<your-bundle-id>`
+   - Enable Push Notifications if you want notification support
+
 ## Quick Start
 
 1. Clone the repository:
