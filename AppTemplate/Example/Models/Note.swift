@@ -1,3 +1,6 @@
+// EXAMPLE CODE — Replace with your own feature module.
+// Delete the entire Example/ folder when building your own app.
+
 import Foundation
 import SwiftData
 

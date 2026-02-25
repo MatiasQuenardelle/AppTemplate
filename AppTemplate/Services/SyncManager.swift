@@ -93,7 +93,7 @@ final class SyncManager {
                 }
             }
 
-            // Download notes
+            // MARK: EXAMPLE: Download notes — remove this block when removing the Example module.
             let fsNotes = try await FirestoreService.shared.fetchNotes(userId: userId)
             let existingNotes = (try? modelContext.fetch(FetchDescriptor<Note>())) ?? []
             let existingNoteIds = Set(existingNotes.map { $0.id.uuidString })
@@ -108,6 +108,7 @@ final class SyncManager {
                     modelContext.insert(note)
                 }
             }
+            // MARK: END EXAMPLE
 
             try? modelContext.save()
 
@@ -140,7 +141,7 @@ final class SyncManager {
                 try? modelContext.save()
             }
 
-            // Sync notes
+            // MARK: EXAMPLE: Sync notes — remove this block when removing the Example module.
             let noteDescriptor = FetchDescriptor<Note>(
                 predicate: #Predicate<Note> { $0.needsSync == true }
             )
@@ -152,6 +153,7 @@ final class SyncManager {
                 note.needsSync = false
             }
             try? modelContext.save()
+            // MARK: END EXAMPLE
 
             pendingChangesCount = 0
             lastSyncDate = Date()
@@ -173,10 +175,12 @@ final class SyncManager {
     /// Call this from views after modifying a model object.
     /// Explicitly saves the context to ensure cross-context visibility.
     func markNeedsSync<T: AnyObject>(_ object: T) where T: AnyObject {
+        // MARK: EXAMPLE: Note sync — remove this branch when removing the Example module.
         if let note = object as? Note {
             note.needsSync = true
             note.updatedAt = Date()
             note.modelContext?.save(withAutosaving: true)
+        // MARK: END EXAMPLE
         } else if let profile = object as? UserProfile {
             profile.needsSync = true
             profile.updatedAt = Date()
@@ -202,13 +206,14 @@ final class SyncManager {
         guard let userId, let modelContext else { return }
         stopListening()
 
-        // Notes listener
+        // MARK: EXAMPLE: Notes listener — remove this block when removing the Example module.
         let notesListener = FirestoreService.shared.addNotesListener(userId: userId) { [weak self] fsNotes in
             Task { @MainActor [weak self] in
                 self?.handleRemoteNotes(fsNotes)
             }
         }
         listeners.append(notesListener)
+        // MARK: END EXAMPLE
 
         // Profile listener
         let profileListener = FirestoreService.shared.addProfileListener(userId: userId) { [weak self] fsProfile in
@@ -221,6 +226,7 @@ final class SyncManager {
         listeners.append(profileListener)
     }
 
+    // MARK: - EXAMPLE: Remote notes handler — delete this method when removing the Example module.
     private func handleRemoteNotes(_ fsNotes: [FSNote]) {
         guard let modelContext else { return }
         let existingNotes = (try? modelContext.fetch(FetchDescriptor<Note>())) ?? []
@@ -260,7 +266,7 @@ final class SyncManager {
         syncTask?.cancel()
     }
 
-    // MARK: - Delete Note from Cloud
+    // MARK: - EXAMPLE: Delete Note from Cloud — delete this method when removing the Example module.
 
     func deleteNoteFromCloud(_ note: Note) async {
         guard let userId else { return }

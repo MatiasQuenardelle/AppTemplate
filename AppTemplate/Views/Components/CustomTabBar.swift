@@ -1,26 +1,28 @@
 import SwiftUI
 
+// MARK: - EXAMPLE: Tab enum — replace .notes and .search with your own tabs.
 enum Tab: Int, CaseIterable {
-    case notes = 0
-    case search = 1
+    case notes = 0    // EXAMPLE — replace with your first tab
+    case search = 1   // EXAMPLE — replace with your second tab
     case settings = 2
 
     var title: String {
         switch self {
-        case .notes: return "Notes"
-        case .search: return "Search"
+        case .notes: return "Notes"      // EXAMPLE
+        case .search: return "Search"    // EXAMPLE
         case .settings: return "Settings"
         }
     }
 
     var icon: String {
         switch self {
-        case .notes: return "note.text"
-        case .search: return "magnifyingglass"
+        case .notes: return "note.text"          // EXAMPLE
+        case .search: return "magnifyingglass"   // EXAMPLE
         case .settings: return "gearshape"
         }
     }
 }
+// MARK: END EXAMPLE
 
 // MARK: - Custom Tab Bar
 

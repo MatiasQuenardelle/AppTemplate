@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import FirebaseCore
+import FirebaseCrashlytics
 import FirebaseFirestore
 import GoogleSignIn
 import UserNotifications
@@ -13,6 +14,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         FirebaseApp.configure()
+        #if DEBUG
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
+        #endif
         FirestoreService.shared.configureSync()
         UNUserNotificationCenter.current().delegate = self
         return true
@@ -81,7 +85,7 @@ struct AppTemplateApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             UserProfile.self,
-            Note.self
+            Note.self  // MARK: EXAMPLE — remove Note.self when removing the Example module.
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

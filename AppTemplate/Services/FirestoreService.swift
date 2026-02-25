@@ -35,7 +35,7 @@ actor FirestoreService {
         return try snapshot.data(as: FSUserProfile.self)
     }
 
-    // MARK: - Notes
+    // MARK: - EXAMPLE: Notes — Delete these methods when removing the Example module.
 
     func saveNote(_ note: FSNote, userId: String) async throws {
         let ref = db.collection("users").document(userId).collection("notes").document(note.id)
@@ -64,6 +64,7 @@ actor FirestoreService {
 
     // MARK: - Listeners
 
+    // MARK: - EXAMPLE: Notes listener — Delete this method when removing the Example module.
     nonisolated func addNotesListener(
         userId: String,
         onChange: @escaping @Sendable ([FSNote]) -> Void
@@ -95,7 +96,7 @@ actor FirestoreService {
     func deleteAllUserData(userId: String) async throws {
         let userRef = db.collection("users").document(userId)
 
-        // Delete notes
+        // MARK: EXAMPLE: Delete notes collection — remove when removing the Example module.
         let notes = try await userRef.collection("notes").getDocuments()
         for doc in notes.documents {
             try await doc.reference.delete()

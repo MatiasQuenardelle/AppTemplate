@@ -32,7 +32,7 @@ struct FSUserProfile: FirestoreDocument {
     }
 }
 
-// MARK: - FSNote
+// MARK: - EXAMPLE: FSNote — Delete this struct when removing the Example module.
 
 struct FSNote: FirestoreDocument {
     let id: String

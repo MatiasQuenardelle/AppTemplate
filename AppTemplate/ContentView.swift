@@ -39,10 +39,12 @@ struct ContentView: View {
             // Tab content
             Group {
                 switch selectedTab {
+                // MARK: EXAMPLE: Tab cases — replace with your own tabs.
                 case .notes:
                     NotesListView()
                 case .search:
                     SearchView()
+                // MARK: END EXAMPLE
                 case .settings:
                     SettingsView()
                 }
@@ -58,5 +60,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(AppState())
-        .modelContainer(for: [UserProfile.self, Note.self], inMemory: true)
+        .modelContainer(for: [UserProfile.self, Note.self], inMemory: true) // MARK: EXAMPLE — remove Note.self
 }
