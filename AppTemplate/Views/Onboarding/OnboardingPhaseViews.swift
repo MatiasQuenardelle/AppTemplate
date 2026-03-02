@@ -17,18 +17,19 @@ struct WelcomePhaseView: View {
                     .fill(Theme.copperGold.opacity(0.15))
                     .frame(width: 140, height: 140)
 
-                Image(systemName: "note.text")
+                Image(systemName: Strings.Onboarding.welcomeIcon)
                     .font(.system(size: 64))
                     .foregroundStyle(Theme.copperGold)
             }
+            .accessibilityHidden(true)
 
             VStack(spacing: 12) {
-                Text("Welcome to \(Constants.App.displayName)")
+                Text(Strings.Onboarding.welcomeTitle)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(Theme.primaryText)
                     .multilineTextAlignment(.center)
 
-                Text("Your notes, synced everywhere.")
+                Text(Strings.Onboarding.welcomeSubtitle)
                     .font(.system(size: 17))
                     .foregroundStyle(Theme.secondaryText)
                     .multilineTextAlignment(.center)
@@ -41,7 +42,7 @@ struct WelcomePhaseView: View {
                 Button {
                     onContinue()
                 } label: {
-                    Text("Get Started")
+                    Text(Strings.Onboarding.getStarted)
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.black)
                         .frame(maxWidth: .infinity)
@@ -52,7 +53,7 @@ struct WelcomePhaseView: View {
                 Button {
                     onSignIn()
                 } label: {
-                    Text("I already have an account")
+                    Text(Strings.Onboarding.alreadyHaveAccount)
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(Theme.secondaryText)
                 }
@@ -77,18 +78,18 @@ struct NameInputPhaseView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                Text("What's your name?")
+                Text(Strings.Onboarding.nameTitle)
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Theme.primaryText)
 
-                Text("We'll use this to personalize your experience.")
+                Text(Strings.Onboarding.nameSubtitle)
                     .font(.system(size: 15))
                     .foregroundStyle(Theme.secondaryText)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 40)
             }
 
-            TextField("Your name", text: $name)
+            TextField(Strings.Onboarding.namePlaceholder, text: $name)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(Theme.primaryText)
                 .multilineTextAlignment(.center)
@@ -111,7 +112,7 @@ struct NameInputPhaseView: View {
             Button {
                 onContinue()
             } label: {
-                Text("Continue")
+                Text(Strings.Onboarding.continueButton)
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.black)
                     .frame(maxWidth: .infinity)
@@ -150,13 +151,14 @@ struct NotificationsPhaseView: View {
                     .font(.system(size: 52))
                     .foregroundStyle(Theme.copperGold)
             }
+            .accessibilityHidden(true)
 
             VStack(spacing: 12) {
-                Text("Stay Updated")
+                Text(Strings.Onboarding.notificationsTitle)
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Theme.primaryText)
 
-                Text("Get reminders and sync notifications so you never miss anything.")
+                Text(Strings.Onboarding.notificationsSubtitle)
                     .font(.system(size: 15))
                     .foregroundStyle(Theme.secondaryText)
                     .multilineTextAlignment(.center)
@@ -169,7 +171,7 @@ struct NotificationsPhaseView: View {
                 Button {
                     requestNotifications()
                 } label: {
-                    Text("Enable Notifications")
+                    Text(Strings.Onboarding.enableNotifications)
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.black)
                         .frame(maxWidth: .infinity)
@@ -180,7 +182,7 @@ struct NotificationsPhaseView: View {
                 Button {
                     onContinue()
                 } label: {
-                    Text("Maybe Later")
+                    Text(Strings.Onboarding.maybeLater)
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(Theme.secondaryText)
                 }
@@ -214,11 +216,11 @@ struct PaywallPhaseView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                Text("Unlock Premium")
+                Text(Strings.Onboarding.paywallTitle)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(Theme.primaryText)
 
-                Text("Sync across devices, unlimited notes, and more.")
+                Text(Strings.Onboarding.paywallSubtitle)
                     .font(.system(size: 15))
                     .foregroundStyle(Theme.secondaryText)
                     .multilineTextAlignment(.center)
@@ -227,10 +229,9 @@ struct PaywallPhaseView: View {
 
             // Features
             VStack(alignment: .leading, spacing: 16) {
-                FeatureRow(icon: "icloud.fill", text: "Cloud sync across all devices")
-                FeatureRow(icon: "infinity", text: "Unlimited notes")
-                FeatureRow(icon: "sparkles", text: "AI-powered summaries")
-                FeatureRow(icon: "lock.shield.fill", text: "End-to-end encryption")
+                ForEach(Strings.Onboarding.paywallFeatures, id: \.text) { feature in
+                    FeatureRow(icon: feature.icon, text: feature.text)
+                }
             }
             .padding(.horizontal, 32)
 
@@ -247,7 +248,7 @@ struct PaywallPhaseView: View {
                         onComplete()
                     }
                 } label: {
-                    Text("Start Free Trial")
+                    Text(Strings.Onboarding.startFreeTrial)
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.black)
                         .frame(maxWidth: .infinity)
@@ -259,7 +260,7 @@ struct PaywallPhaseView: View {
                 Button {
                     onRestore()
                 } label: {
-                    Text("Restore Purchases")
+                    Text(Strings.Onboarding.restorePurchases)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Theme.secondaryText)
                 }
@@ -268,7 +269,7 @@ struct PaywallPhaseView: View {
                 Button {
                     onComplete()
                 } label: {
-                    Text("Continue without Premium")
+                    Text(Strings.Onboarding.continueWithoutPremium)
                         .font(.system(size: 13))
                         .foregroundStyle(Theme.tertiaryText)
                 }
@@ -292,10 +293,12 @@ private struct FeatureRow: View {
                 .font(.system(size: 18))
                 .foregroundStyle(Theme.copperGold)
                 .frame(width: 28)
+                .accessibilityHidden(true)
 
             Text(text)
                 .font(.system(size: 15))
                 .foregroundStyle(Theme.primaryText)
         }
+        .accessibilityElement(children: .combine)
     }
 }

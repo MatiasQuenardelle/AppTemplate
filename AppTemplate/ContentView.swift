@@ -31,6 +31,19 @@ struct ContentView: View {
                 profileCache.refresh()
             }
         }
+        .onChange(of: appState.deepLinkAction) { _, action in
+            guard hasCompletedOnboarding else { return }
+            switch action {
+            case .showSettings, .showProfile:
+                selectedTab = .settings
+            case .showItem:
+                // Navigate to the relevant tab for your item type
+                break
+            case .none:
+                break
+            }
+            appState.clearDeepLinkAction()
+        }
     }
 
     @ViewBuilder

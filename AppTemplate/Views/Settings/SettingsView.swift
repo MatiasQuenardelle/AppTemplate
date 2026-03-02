@@ -30,10 +30,11 @@ struct SettingsView: View {
                                     .font(.system(size: 22, weight: .bold))
                                     .foregroundStyle(Theme.copperGold)
                             }
+                            .accessibilityHidden(true)
 
                             VStack(alignment: .leading, spacing: 4) {
                                 if editingName {
-                                    TextField("Name", text: $nameText, onCommit: saveName)
+                                    TextField(Strings.Settings.name, text: $nameText, onCommit: saveName)
                                         .font(.system(size: 17, weight: .semibold))
                                         .foregroundStyle(Theme.primaryText)
                                 } else {
@@ -42,7 +43,7 @@ struct SettingsView: View {
                                         .foregroundStyle(Theme.primaryText)
                                 }
 
-                                Text(authService.currentUser?.email ?? "Not signed in")
+                                Text(authService.currentUser?.email ?? Strings.Settings.notSignedIn)
                                     .font(.system(size: 13))
                                     .foregroundStyle(Theme.secondaryText)
                             }
@@ -61,32 +62,36 @@ struct SettingsView: View {
                                     .font(.system(size: 14))
                                     .foregroundStyle(Theme.copperGold)
                             }
+                            .accessibilityLabel(editingName ? "Save name" : "Edit name")
                         }
                         .listRowBackground(Theme.cardBackground)
                     }
 
                     // Sync Section
-                    Section("Sync") {
+                    Section(Strings.Settings.syncSection) {
                         SyncStatusButton()
                             .listRowBackground(Theme.cardBackground)
                     }
 
                     // Subscription Section
-                    Section("Subscription") {
+                    Section(Strings.Settings.subscriptionSection) {
                         HStack {
                             Image(systemName: "crown.fill")
                                 .foregroundStyle(Theme.copperGold)
                                 .frame(width: 24)
+                                .accessibilityHidden(true)
 
-                            Text("Premium")
+                            Text(Strings.Settings.premium)
                                 .foregroundStyle(Theme.primaryText)
 
                             Spacer()
 
-                            Text(SubscriptionManager.shared.isPremium ? "Active" : "Free")
+                            Text(SubscriptionManager.shared.isPremium ? Strings.Settings.premiumActive : Strings.Settings.premiumFree)
                                 .font(.caption)
                                 .foregroundStyle(SubscriptionManager.shared.isPremium ? .green : Theme.secondaryText)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Premium subscription, \(SubscriptionManager.shared.isPremium ? "active" : "free")")
                         .listRowBackground(Theme.cardBackground)
 
                         Button {
@@ -98,7 +103,7 @@ struct SettingsView: View {
                                 Image(systemName: "arrow.clockwise")
                                     .foregroundStyle(Theme.copperGold)
                                     .frame(width: 24)
-                                Text("Restore Purchases")
+                                Text(Strings.Settings.restorePurchases)
                                     .foregroundStyle(Theme.primaryText)
                             }
                         }
@@ -106,7 +111,7 @@ struct SettingsView: View {
                     }
 
                     // Support Section
-                    Section("Support") {
+                    Section(Strings.Settings.supportSection) {
                         Button {
                             showBugReport = true
                         } label: {
@@ -114,7 +119,7 @@ struct SettingsView: View {
                                 Image(systemName: "ladybug")
                                     .foregroundStyle(Theme.salmonAccent)
                                     .frame(width: 24)
-                                Text("Report a Bug")
+                                Text(Strings.Settings.reportBug)
                                     .foregroundStyle(Theme.primaryText)
                             }
                         }
@@ -123,7 +128,7 @@ struct SettingsView: View {
 
                     // Account Section
                     if authService.isAuthenticated {
-                        Section("Account") {
+                        Section(Strings.Settings.accountSection) {
                             Button {
                                 showSignOutConfirmation = true
                             } label: {
@@ -131,7 +136,7 @@ struct SettingsView: View {
                                     Image(systemName: "rectangle.portrait.and.arrow.right")
                                         .foregroundStyle(.orange)
                                         .frame(width: 24)
-                                    Text("Sign Out")
+                                    Text(Strings.Settings.signOut)
                                         .foregroundStyle(.orange)
                                 }
                             }
@@ -144,7 +149,7 @@ struct SettingsView: View {
                                     Image(systemName: "trash")
                                         .foregroundStyle(.red)
                                         .frame(width: 24)
-                                    Text("Delete Account")
+                                    Text(Strings.Settings.deleteAccount)
                                         .foregroundStyle(.red)
                                 }
                             }
@@ -155,7 +160,7 @@ struct SettingsView: View {
                     // App Info
                     Section {
                         HStack {
-                            Text("Version")
+                            Text(Strings.Settings.version)
                                 .foregroundStyle(Theme.secondaryText)
                             Spacer()
                             Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
@@ -166,24 +171,24 @@ struct SettingsView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Settings")
+            .navigationTitle(Strings.Settings.title)
             .navigationBarTitleDisplayMode(.large)
             .toolbarBackground(Theme.deepBlack, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .sheet(isPresented: $showBugReport) {
                 BugReportView()
             }
-            .alert("Sign Out", isPresented: $showSignOutConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Sign Out", role: .destructive) { signOut() }
+            .alert(Strings.Settings.signOut, isPresented: $showSignOutConfirmation) {
+                Button(Strings.Settings.cancel, role: .cancel) {}
+                Button(Strings.Settings.signOut, role: .destructive) { signOut() }
             } message: {
-                Text("Are you sure you want to sign out?")
+                Text(Strings.Settings.signOutConfirmation)
             }
-            .alert("Delete Account", isPresented: $showDeleteConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) { deleteAccount() }
+            .alert(Strings.Settings.deleteAccount, isPresented: $showDeleteConfirmation) {
+                Button(Strings.Settings.cancel, role: .cancel) {}
+                Button(Strings.Settings.delete, role: .destructive) { deleteAccount() }
             } message: {
-                Text("This will permanently delete your account and all data. This cannot be undone.")
+                Text(Strings.Settings.deleteAccountWarning)
             }
         }
     }

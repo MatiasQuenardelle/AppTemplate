@@ -34,7 +34,7 @@ struct OnboardingContainerView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "chevron.left")
-                                Text("Back")
+                                Text(Strings.General.back)
                             }
                             .font(.system(size: 15, weight: .medium))
                             .foregroundStyle(Theme.secondaryText)

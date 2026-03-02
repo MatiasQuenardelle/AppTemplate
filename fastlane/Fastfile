@@ -1,0 +1,67 @@
+default_platform(:ios)
+
+platform :ios do
+
+  # ──────────────────────────────────────────────
+  # Beta: Build and upload to TestFlight
+  # ──────────────────────────────────────────────
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    setup_ci if ENV['CI']
+
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1
+    )
+
+    build_app(
+      scheme: ENV['APP_SCHEME'] || find_scheme,
+      export_method: "app-store",
+      clean: true
+    )
+
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  # ──────────────────────────────────────────────
+  # Release: Build and submit to App Store
+  # ──────────────────────────────────────────────
+  desc "Build and submit to App Store review"
+  lane :release do
+    setup_ci if ENV['CI']
+
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1
+    )
+
+    build_app(
+      scheme: ENV['APP_SCHEME'] || find_scheme,
+      export_method: "app-store",
+      clean: true
+    )
+
+    upload_to_app_store(
+      skip_screenshots: true,
+      skip_metadata: true,
+      submit_for_review: false,
+      automatic_release: false
+    )
+  end
+
+  # ──────────────────────────────────────────────
+  # Helpers
+  # ──────────────────────────────────────────────
+
+  private_lane :find_scheme do
+    # Auto-detect the scheme from project.yml
+    project_files = Dir.glob("../*.xcodeproj")
+    if project_files.any?
+      scheme_name = File.basename(project_files.first, ".xcodeproj")
+      UI.message("Auto-detected scheme: #{scheme_name}")
+      scheme_name
+    else
+      UI.user_error!("No .xcodeproj found. Set APP_SCHEME env var or run xcodegen first.")
+    end
+  end
+end

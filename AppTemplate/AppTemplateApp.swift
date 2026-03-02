@@ -58,6 +58,44 @@ extension Notification.Name {
 
 enum DeepLinkAction: Equatable {
     case none
+    case showSettings
+    case showProfile
+    case showItem(id: String)
+    // Add your own deep link actions here
+}
+
+// MARK: - Deep Link Router
+
+enum DeepLinkRouter {
+    /// Parse a URL into a DeepLinkAction.
+    /// URL format: yourscheme://path/optional-id
+    /// Examples:
+    ///   apptemplate://settings  ->  .showSettings
+    ///   apptemplate://profile   ->  .showProfile
+    ///   apptemplate://item/abc  ->  .showItem(id: "abc")
+    static func parse(url: URL) -> DeepLinkAction {
+        guard url.scheme == Constants.App.urlScheme else { return .none }
+
+        let host = url.host() ?? ""
+        let pathComponents = url.pathComponents.filter { $0 != "/" }
+
+        switch host {
+        case "settings":
+            return .showSettings
+        case "profile":
+            return .showProfile
+        case "item":
+            if let id = pathComponents.first {
+                return .showItem(id: id)
+            }
+            return .none
+        // Add your own routes here:
+        // case "yourRoute":
+        //     return .yourAction
+        default:
+            return .none
+        }
+    }
 }
 
 // MARK: - App State
@@ -66,8 +104,9 @@ class AppState: ObservableObject {
     @Published var deepLinkAction: DeepLinkAction = .none
 
     func handleDeepLink(_ url: URL) {
-        guard url.scheme == Constants.App.urlScheme else { return }
-        // Add deep link handling here
+        let action = DeepLinkRouter.parse(url: url)
+        guard action != .none else { return }
+        deepLinkAction = action
     }
 
     func clearDeepLinkAction() {

@@ -161,8 +161,8 @@ final class SubscriptionManager: NSObject, @unchecked Sendable {
         let reminderSeconds = max(3600, TimeInterval((trialDays - 1) * 86400))
 
         let content = UNMutableNotificationContent()
-        content.title = "Your free trial ends tomorrow"
-        content.body = "Keep using \(Constants.App.displayName) \u{2014} don't lose your progress!"
+        content.title = Strings.Notifications.trialEndsTitle
+        content.body = Strings.Notifications.trialEndsBody
         content.sound = .default
 
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: reminderSeconds, repeats: false)

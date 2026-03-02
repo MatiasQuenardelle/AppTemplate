@@ -1,0 +1,10 @@
+# App Store Connect / Apple Developer account details
+# Docs: https://docs.fastlane.tools/advanced/Appfile/
+
+# TODO: Replace with your Apple Developer account email
+# app_identifier("com.yourcompany.yourapp")
+# apple_id("your@email.com")
+# team_id("XXXXXXXXXX")
+
+# If you have a separate App Store Connect team:
+# itc_team_id("XXXXXXXXXX")

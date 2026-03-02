@@ -65,3 +65,14 @@ targets:
           - $(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)/Contents/Resources/DWARF/$(TARGET_NAME)
           - $(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)/Contents/Info.plist
           - $(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)
+
+  AppTemplateTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AppTemplateTests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: AppTemplate

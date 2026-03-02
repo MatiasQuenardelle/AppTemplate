@@ -2,22 +2,33 @@
 
 A production-ready iOS app template built with SwiftUI, providing authentication, cloud sync, subscriptions, and AI integration out of the box. Clone it, swap in your credentials, delete the example module, and start building.
 
+**Want to launch an app in one day?** See [LAUNCH_GUIDE.md](LAUNCH_GUIDE.md) for a step-by-step playbook from `git clone` to App Store submission.
+
 ## Features
 
 - **SwiftUI + SwiftData** local persistence
 - **Firebase Auth** with Apple Sign-In, Google Sign-In, and Email/Password
 - **Firestore cloud sync** with real-time listeners and debounced uploads
 - **RevenueCat** subscription management with paywall
-- **OpenAI API** integration (GPT-4o by default)
+- **OpenAI API** integration with general-purpose chat, summarization, and key-point extraction
 - **4-phase onboarding flow**: Welcome, Name, Notifications, Paywall
 - **Custom dark theme** with copper/gold accent colors
 - **Custom tab bar** navigation
 - **Sync status indicators** showing upload/download state
 - **Bug reporting** with image upload
-- **Deep linking** support via URL scheme
+- **Deep linking** with URL router (settings, profile, item routes)
 - **Privacy manifest** (`PrivacyInfo.xcprivacy`)
 - **Firebase Analytics + Crashlytics** (disabled in DEBUG builds)
 - **Example "Notes" module** demonstrating the full CRUD + sync pattern
+- **Firestore & Storage security rules** ready to deploy
+- **Fastlane** configuration for TestFlight and App Store submission
+- **App Store templates** for metadata, privacy policy, and support page
+- **Centralized strings** (`Strings.swift`) for fast UI copy customization
+- **Analytics event catalog** with standard events for onboarding, auth, purchases, and sync
+- **Reusable state views** for empty, loading, and error states
+- **Accessibility labels** on all interactive elements (VoiceOver-ready)
+- **Sync retry with backoff** — failed uploads retry automatically with exponential backoff
+- **Unit test suite** for onboarding logic, sync status, constants, strings, and deep links
 
 ## Prerequisites
 
@@ -89,52 +100,76 @@ The simplest approach for Firebase is to download your project's `GoogleService-
 ## Architecture / File Tree
 
 ```
-AppTemplate/
-├── AppTemplateApp.swift          # App entry point, Firebase config
-├── ContentView.swift             # Tab-based navigation
-├── Example/                      # <- Example Notes module (delete me)
-│   ├── Models/Note.swift
+├── LAUNCH_GUIDE.md              # Step-by-step launch day playbook
+├── firestore.rules              # Firestore security rules (deploy to Firebase)
+├── storage.rules                # Storage security rules (deploy to Firebase)
+├── AppStore/                    # App Store submission templates
+│   ├── metadata.md              # Description, keywords, review notes
+│   ├── privacy-policy.html      # Privacy policy template
+│   └── support.html             # Support page template
+├── fastlane/                    # Fastlane deployment configuration
+│   ├── Appfile                  # Apple Developer account config
+│   ├── Fastfile                 # Build & upload lanes
+│   └── Gemfile                  # Ruby dependencies
+├── AppTemplate/
+│   ├── AppTemplateApp.swift     # App entry point, Firebase config
+│   ├── ContentView.swift        # Tab-based navigation
+│   ├── Example/                 # <- Example Notes module (delete me)
+│   │   ├── Models/Note.swift
+│   │   └── Views/
+│   │       ├── NotesListView.swift
+│   │       ├── NoteDetailView.swift
+│   │       ├── NoteEditorView.swift
+│   │       └── SearchView.swift
+│   ├── Models/
+│   │   └── UserProfile.swift
+│   ├── Resources/
+│   │   ├── Assets.xcassets/
+│   │   ├── GoogleService-Info.plist
+│   │   └── PrivacyInfo.xcprivacy
+│   ├── Services/
+│   │   ├── Analytics.swift         # Analytics event catalog
+│   │   ├── AuthenticationService.swift
+│   │   ├── FirestoreModels.swift
+│   │   ├── FirestoreService.swift
+│   │   ├── OpenAIService.swift     # General-purpose chat, summarize, extract
+│   │   ├── ProfileCacheService.swift
+│   │   ├── SubscriptionManager.swift
+│   │   └── SyncManager.swift       # Includes retry with exponential backoff
+│   ├── Utilities/
+│   │   ├── Constants.swift
+│   │   ├── Extensions.swift
+│   │   ├── Strings.swift           # All user-facing strings (customize here)
+│   │   └── Theme.swift
 │   └── Views/
-│       ├── NotesListView.swift
-│       ├── NoteDetailView.swift
-│       ├── NoteEditorView.swift
-│       └── SearchView.swift
-├── Models/
-│   └── UserProfile.swift
-├── Resources/
-│   ├── Assets.xcassets/
-│   ├── GoogleService-Info.plist
-│   └── PrivacyInfo.xcprivacy
-├── Services/
-│   ├── AuthenticationService.swift
-│   ├── FirestoreModels.swift
-│   ├── FirestoreService.swift
-│   ├── OpenAIService.swift
-│   ├── ProfileCacheService.swift
-│   ├── SubscriptionManager.swift
-│   └── SyncManager.swift
-├── Utilities/
-│   ├── Constants.swift
-│   ├── Extensions.swift
-│   └── Theme.swift
-└── Views/
-    ├── Auth/EmailAuthView.swift
-    ├── Components/
-    │   ├── CircularProgressView.swift
-    │   ├── CustomTabBar.swift
-    │   ├── DateNavigationHeader.swift
-    │   ├── ProgressBarView.swift
-    │   └── SyncStatusView.swift
-    ├── Onboarding/
-    │   ├── OnboardingContainerView.swift
-    │   ├── OnboardingPhaseViews.swift
-    │   └── OnboardingState.swift
-    └── Settings/
-        ├── BugReportView.swift
-        └── SettingsView.swift
+│       ├── Auth/EmailAuthView.swift
+│       ├── Components/
+│       │   ├── CircularProgressView.swift
+│       │   ├── CustomTabBar.swift
+│       │   ├── DateNavigationHeader.swift
+│       │   ├── ProgressBarView.swift
+│       │   ├── StateViews.swift    # Empty, loading, and error state views
+│       │   └── SyncStatusView.swift
+│       ├── Onboarding/
+│       │   ├── OnboardingContainerView.swift
+│       │   ├── OnboardingPhaseViews.swift
+│       │   └── OnboardingState.swift
+│       └── Settings/
+│           ├── BugReportView.swift
+│           └── SettingsView.swift
+├── AppTemplateTests/               # Unit test suite
+│   ├── ConstantsTests.swift
+│   ├── DeepLinkTests.swift
+│   ├── OnboardingStateTests.swift
+│   ├── StringsTests.swift
+│   └── SyncStatusTests.swift
 ```
 
 ## Customization Guide
+
+### Change user-facing text
+
+Edit `AppTemplate/Utilities/Strings.swift`. All UI copy (onboarding, auth, settings, sync status, bug report, notifications) is centralized here. Update the strings to match your app's voice and features.
 
 ### Change the theme
 
@@ -164,6 +199,28 @@ Follow the pattern established by the example Notes module:
 1. **Define a Firestore-compatible struct** in `FirestoreService/FirestoreModels.swift`, following the `FSNote` pattern (a `Codable` struct that maps to your Firestore document).
 2. **Add CRUD methods and a listener** in `Services/FirestoreService.swift` for reading/writing your new document type.
 3. **Add sync logic** in `Services/SyncManager.swift` to handle bidirectional sync between SwiftData and Firestore (upload local changes, apply remote changes).
+
+### Deploy Firebase security rules
+
+After setting up your Firebase project, deploy the included security rules:
+
+1. Go to **Firestore Database** > **Rules** in the Firebase Console
+2. Copy the contents of `firestore.rules` and paste them in, then click **Publish**
+3. Go to **Storage** > **Rules**
+4. Copy the contents of `storage.rules` and paste them in, then click **Publish**
+
+These rules ensure users can only access their own data and bug reports are write-only.
+
+### Deploy with Fastlane
+
+```bash
+cd fastlane
+bundle install
+bundle exec fastlane beta     # Upload to TestFlight
+bundle exec fastlane release  # Submit to App Store
+```
+
+Edit `fastlane/Appfile` with your Apple Developer account details first.
 
 ## Removing the Example Notes Module
 

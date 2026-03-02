@@ -73,6 +73,8 @@ struct TabBarButton: View {
             }
             .foregroundStyle(isSelected ? Theme.selectedTint : Theme.unselectedTint)
             .frame(maxWidth: .infinity)
+            .accessibilityLabel(tab.title)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
         }
     }
 }

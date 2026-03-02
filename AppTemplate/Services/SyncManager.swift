@@ -32,6 +32,8 @@ final class SyncManager {
     private var listeners: [ListenerRegistration] = []
     private var syncTask: Task<Void, Never>?
     private var debounceTask: Task<Void, Never>?
+    private var retryCount: Int = 0
+    private static let maxRetries = 3
 
     private init() {}
 
@@ -40,6 +42,10 @@ final class SyncManager {
     func configure(userId: String, modelContext: ModelContext) async {
         self.userId = userId
         self.modelContext = modelContext
+        self.retryCount = 0
+
+        // Count any items that still need sync (persisted from previous session)
+        updatePendingCount()
 
         let hasCompletedInitialSync = UserDefaults.standard.bool(forKey: "hasCompletedInitialSync_\(userId)")
 
@@ -50,6 +56,26 @@ final class SyncManager {
         }
 
         setupListeners()
+    }
+
+    /// Count items with needsSync=true in the local database.
+    private func updatePendingCount() {
+        guard let modelContext else { return }
+
+        var profileDescriptor = FetchDescriptor<UserProfile>(
+            predicate: #Predicate<UserProfile> { $0.needsSync == true }
+        )
+        profileDescriptor.fetchLimit = 1
+        let profileCount = (try? modelContext.fetchCount(profileDescriptor)) ?? 0
+
+        // MARK: EXAMPLE: Count pending notes — remove when removing the Example module.
+        let noteDescriptor = FetchDescriptor<Note>(
+            predicate: #Predicate<Note> { $0.needsSync == true }
+        )
+        let noteCount = (try? modelContext.fetchCount(noteDescriptor)) ?? 0
+        // MARK: END EXAMPLE
+
+        pendingChangesCount = profileCount + noteCount
     }
 
     func configureWithErrorHandling(userId: String, modelContext: ModelContext) async throws {
@@ -157,8 +183,34 @@ final class SyncManager {
 
             pendingChangesCount = 0
             lastSyncDate = Date()
+            retryCount = 0
         } catch {
             print("[SyncManager] syncPendingChanges error: \(error)")
+            syncStatus = .error("Sync failed: \(error.localizedDescription)")
+            scheduleRetryIfNeeded()
+        }
+    }
+
+    // MARK: - Retry with Backoff
+
+    private func scheduleRetryIfNeeded() {
+        guard retryCount < Self.maxRetries else {
+            print("[SyncManager] Max retries reached, giving up")
+            return
+        }
+
+        retryCount += 1
+        let delay = UInt64(pow(2.0, Double(retryCount))) * 1_000_000_000 // exponential backoff: 2s, 4s, 8s
+        syncTask = Task {
+            try? await Task.sleep(nanoseconds: delay)
+            guard !Task.isCancelled else { return }
+            syncStatus = .syncing
+            await syncPendingChanges()
+            if syncStatus.isActive == false && retryCount > 0 {
+                // If we still have errors, status was already set in syncPendingChanges
+            } else {
+                syncStatus = .idle
+            }
         }
     }
 

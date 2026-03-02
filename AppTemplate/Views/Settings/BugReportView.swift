@@ -42,7 +42,7 @@ struct BugReportView: View {
                     VStack(spacing: 20) {
                         // Description
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Describe the bug")
+                            Text(Strings.BugReport.describeTheBug)
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(.white)
 
@@ -54,7 +54,7 @@ struct BugReportView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .overlay(alignment: .topLeading) {
                                     if descriptionText.isEmpty {
-                                        Text("What happened? What did you expect?")
+                                        Text(Strings.BugReport.placeholder)
                                             .foregroundStyle(Theme.tertiaryText)
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 12)
@@ -62,7 +62,7 @@ struct BugReportView: View {
                                     }
                                 }
 
-                            Text("Minimum 10 characters")
+                            Text(Strings.BugReport.minCharacters)
                                 .font(.system(size: 12))
                                 .foregroundStyle(Theme.secondaryText)
                         }
@@ -75,12 +75,13 @@ struct BugReportView: View {
                                     .scaledToFit()
                                     .frame(maxHeight: 200)
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .accessibilityLabel("Attached screenshot")
 
                                 Button {
                                     selectedItem = nil
                                     selectedImageData = nil
                                 } label: {
-                                    Label("Remove image", systemImage: "xmark.circle.fill")
+                                    Label(Strings.BugReport.removeImage, systemImage: "xmark.circle.fill")
                                         .font(.system(size: 14))
                                         .foregroundStyle(.red)
                                 }
@@ -92,7 +93,7 @@ struct BugReportView: View {
                                             .foregroundStyle(Theme.salmonAccent)
                                             .frame(width: 28)
 
-                                        Text("Attach screenshot")
+                                        Text(Strings.BugReport.attachScreenshot)
                                             .font(.system(size: 15))
                                             .foregroundStyle(.white)
 
@@ -112,16 +113,16 @@ struct BugReportView: View {
 
                         // Device Info
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Device Info")
+                            Text(Strings.BugReport.deviceInfo)
                                 .font(.system(size: 15, weight: .medium))
                                 .foregroundStyle(.white)
 
                             VStack(spacing: 0) {
-                                DeviceInfoRow(label: "App Version", value: appVersion)
+                                DeviceInfoRow(label: Strings.BugReport.appVersion, value: appVersion)
                                 Divider().background(Theme.tertiaryText)
-                                DeviceInfoRow(label: "iOS", value: iosVersion)
+                                DeviceInfoRow(label: Strings.BugReport.ios, value: iosVersion)
                                 Divider().background(Theme.tertiaryText)
-                                DeviceInfoRow(label: "Device", value: deviceModel)
+                                DeviceInfoRow(label: Strings.BugReport.device, value: deviceModel)
                             }
                             .background(Theme.cardBackground)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -140,17 +141,17 @@ struct BugReportView: View {
                         .scaleEffect(1.5)
                 }
             }
-            .navigationTitle("Report a Bug")
+            .navigationTitle(Strings.BugReport.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Theme.deepBlack, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(Strings.BugReport.cancel) { dismiss() }
                         .foregroundStyle(Theme.salmonAccent)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Send") {
+                    Button(Strings.BugReport.send) {
                         Task { await submitReport() }
                     }
                     .foregroundStyle(canSubmit ? Theme.salmonAccent : Theme.tertiaryText)
@@ -164,10 +165,10 @@ struct BugReportView: View {
                     }
                 }
             }
-            .alert("Thank you!", isPresented: $showSuccess) {
-                Button("OK") { dismiss() }
+            .alert(Strings.BugReport.thankYou, isPresented: $showSuccess) {
+                Button(Strings.Auth.ok) { dismiss() }
             } message: {
-                Text("Your bug report has been submitted. We'll look into it.")
+                Text(Strings.BugReport.submitted)
             }
         }
     }

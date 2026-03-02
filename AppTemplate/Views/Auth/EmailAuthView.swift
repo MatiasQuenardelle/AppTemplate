@@ -42,8 +42,9 @@ struct EmailAuthView: View {
                                     .font(.system(size: 36))
                                     .foregroundStyle(Theme.accentCoral)
                             }
+                            .accessibilityHidden(true)
 
-                            Text(isSignUp ? "Create Account" : "Sign In")
+                            Text(isSignUp ? Strings.Auth.signUp : Strings.Auth.signIn)
                                 .font(.system(size: 28, weight: .bold))
                                 .foregroundStyle(Theme.primaryText)
                         }
@@ -53,7 +54,7 @@ struct EmailAuthView: View {
                         VStack(spacing: 16) {
                             // Email field
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Email")
+                                Text(Strings.Auth.email)
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundStyle(Theme.secondaryText)
 
@@ -78,7 +79,7 @@ struct EmailAuthView: View {
 
                             // Password field
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Password")
+                                Text(Strings.Auth.password)
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundStyle(Theme.secondaryText)
 
@@ -101,7 +102,7 @@ struct EmailAuthView: View {
                             // Confirm password (sign up only)
                             if isSignUp {
                                 VStack(alignment: .leading, spacing: 8) {
-                                    Text("Confirm Password")
+                                    Text(Strings.Auth.confirmPassword)
                                         .font(.system(size: 14, weight: .medium))
                                         .foregroundStyle(Theme.secondaryText)
 
@@ -126,7 +127,7 @@ struct EmailAuthView: View {
                                         )
 
                                     if password != confirmPassword && !confirmPassword.isEmpty {
-                                        Text("Passwords do not match")
+                                        Text(Strings.Auth.passwordsDoNotMatch)
                                             .font(.caption)
                                             .foregroundStyle(.red)
                                     }
@@ -137,7 +138,7 @@ struct EmailAuthView: View {
                             if !isSignUp {
                                 HStack {
                                     Spacer()
-                                    Button("Forgot your password?") {
+                                    Button(Strings.Auth.forgotPassword) {
                                         showForgotPassword = true
                                     }
                                     .font(.system(size: 14, weight: .medium))
@@ -156,7 +157,7 @@ struct EmailAuthView: View {
                                     ProgressView()
                                         .progressViewStyle(CircularProgressViewStyle(tint: .black))
                                 } else {
-                                    Text(isSignUp ? "Create Account" : "Sign In")
+                                    Text(isSignUp ? Strings.Auth.signUp : Strings.Auth.signIn)
                                         .font(.system(size: 16, weight: .semibold))
                                 }
                             }
@@ -179,9 +180,9 @@ struct EmailAuthView: View {
                             }
                         } label: {
                             HStack(spacing: 4) {
-                                Text(isSignUp ? "Already have an account?" : "Don't have an account?")
+                                Text(isSignUp ? Strings.Auth.hasAccount : Strings.Auth.noAccount)
                                     .foregroundStyle(Theme.secondaryText)
-                                Text(isSignUp ? "Sign In" : "Sign Up")
+                                Text(isSignUp ? Strings.Auth.signIn : Strings.Auth.signUp)
                                     .foregroundStyle(Theme.accentCoral)
                                     .fontWeight(.semibold)
                             }
@@ -202,20 +203,21 @@ struct EmailAuthView: View {
                             .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(Theme.secondaryText)
                     }
+                    .accessibilityLabel("Close")
                 }
             }
-            .alert("Error", isPresented: $showError) {
-                Button("OK", role: .cancel) {}
+            .alert(Strings.Auth.error, isPresented: $showError) {
+                Button(Strings.Auth.ok, role: .cancel) {}
             } message: {
                 Text(errorMessage)
             }
             .sheet(isPresented: $showForgotPassword) {
                 ForgotPasswordView()
             }
-            .alert("Email Sent", isPresented: $showSuccessMessage) {
-                Button("OK", role: .cancel) {}
+            .alert(Strings.Auth.emailSentTitle, isPresented: $showSuccessMessage) {
+                Button(Strings.Auth.ok, role: .cancel) {}
             } message: {
-                Text("Check your inbox to reset your password")
+                Text(Strings.Auth.emailSentMessage)
             }
         }
     }
@@ -272,12 +274,13 @@ struct ForgotPasswordView: View {
                                 .font(.system(size: 36))
                                 .foregroundStyle(Theme.accentCoral)
                         }
+                        .accessibilityHidden(true)
 
-                        Text("Reset Password")
+                        Text(Strings.Auth.resetPasswordTitle)
                             .font(.system(size: 24, weight: .bold))
                             .foregroundStyle(Theme.primaryText)
 
-                        Text("Enter your email and we'll send you a link to reset your password")
+                        Text(Strings.Auth.resetPasswordSubtitle)
                             .font(.system(size: 14))
                             .foregroundStyle(Theme.secondaryText)
                             .multilineTextAlignment(.center)
@@ -286,7 +289,7 @@ struct ForgotPasswordView: View {
                     .padding(.top, 40)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Email")
+                        Text(Strings.Auth.email)
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(Theme.secondaryText)
 
@@ -318,7 +321,7 @@ struct ForgotPasswordView: View {
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .black))
                             } else {
-                                Text("Send Reset Link")
+                                Text(Strings.Auth.sendResetLink)
                                     .font(.system(size: 16, weight: .semibold))
                             }
                         }
@@ -346,17 +349,18 @@ struct ForgotPasswordView: View {
                             .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(Theme.secondaryText)
                     }
+                    .accessibilityLabel("Close")
                 }
             }
-            .alert("Error", isPresented: $showError) {
-                Button("OK", role: .cancel) {}
+            .alert(Strings.Auth.error, isPresented: $showError) {
+                Button(Strings.Auth.ok, role: .cancel) {}
             } message: {
                 Text(errorMessage)
             }
-            .alert("Email Sent", isPresented: $showSuccess) {
-                Button("OK", role: .cancel) { dismiss() }
+            .alert(Strings.Auth.emailSentTitle, isPresented: $showSuccess) {
+                Button(Strings.Auth.ok, role: .cancel) { dismiss() }
             } message: {
-                Text("Check your inbox to reset your password")
+                Text(Strings.Auth.emailSentMessage)
             }
         }
     }

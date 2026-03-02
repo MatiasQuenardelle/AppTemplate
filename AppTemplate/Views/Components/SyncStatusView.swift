@@ -15,6 +15,8 @@ struct SyncStatusView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(.ultraThinMaterial, in: Capsule())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(syncAccessibilityLabel)
     }
 
     @ViewBuilder
@@ -47,15 +49,15 @@ struct SyncStatusView: View {
             if let lastSync = syncManager.lastSyncDate {
                 Text(lastSyncText(lastSync))
             } else {
-                Text("Not synced")
+                Text(Strings.Sync.notSynced)
             }
         case .syncing:
-            Text("Syncing...")
+            Text(Strings.Sync.syncing)
         case .error(let message):
             Text(message)
                 .lineLimit(1)
         case .offline:
-            Text("Offline")
+            Text(Strings.Sync.offline)
         }
     }
 
@@ -63,18 +65,34 @@ struct SyncStatusView: View {
         let interval = Date().timeIntervalSince(date)
 
         if interval < 60 {
-            return "Just now"
+            return Strings.Sync.justNow
         } else if interval < 3600 {
             let minutes = Int(interval / 60)
-            return "\(minutes)m ago"
+            return Strings.Sync.minutesAgo(minutes)
         } else if interval < 86400 {
             let hours = Int(interval / 3600)
-            return "\(hours)h ago"
+            return Strings.Sync.hoursAgo(hours)
         } else {
             let formatter = DateFormatter()
             formatter.dateStyle = .short
             formatter.timeStyle = .short
             return formatter.string(from: date)
+        }
+    }
+
+    private var syncAccessibilityLabel: String {
+        switch syncManager.syncStatus {
+        case .idle:
+            if let lastSync = syncManager.lastSyncDate {
+                return "Synced \(lastSyncText(lastSync))"
+            }
+            return Strings.Sync.notSynced
+        case .syncing:
+            return Strings.Sync.syncingData
+        case .error(let message):
+            return "Sync error: \(message)"
+        case .offline:
+            return Strings.Sync.noConnection
         }
     }
 }
@@ -128,7 +146,7 @@ struct SyncStatusButton: View {
                     .frame(width: 24)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Cloud Sync")
+                    Text(Strings.Sync.cloudSync)
                         .foregroundStyle(.primary)
 
                     Text(statusDescription)
@@ -182,21 +200,21 @@ struct SyncStatusButton: View {
 
     private var statusDescription: String {
         if !authService.isAuthenticated {
-            return "Sign in to enable cloud sync"
+            return Strings.Sync.signInToSync
         }
 
         switch syncManager.syncStatus {
         case .idle:
             if let lastSync = syncManager.lastSyncDate {
-                return "Last synced \(lastSyncText(lastSync))"
+                return Strings.Sync.lastSynced(lastSyncText(lastSync))
             }
-            return "Tap to sync"
+            return Strings.Sync.tapToSync
         case .syncing:
-            return "Syncing your data..."
+            return Strings.Sync.syncingData
         case .error(let message):
             return message
         case .offline:
-            return "No internet connection"
+            return Strings.Sync.noConnection
         }
     }
 
@@ -204,13 +222,13 @@ struct SyncStatusButton: View {
         let interval = Date().timeIntervalSince(date)
 
         if interval < 60 {
-            return "just now"
+            return Strings.Sync.justNow.lowercased()
         } else if interval < 3600 {
             let minutes = Int(interval / 60)
-            return "\(minutes) min ago"
+            return Strings.Sync.minutesAgoLong(minutes)
         } else if interval < 86400 {
             let hours = Int(interval / 3600)
-            return "\(hours)h ago"
+            return Strings.Sync.hoursAgo(hours)
         } else {
             return date.formatted(date: .abbreviated, time: .shortened)
         }
